@@ -1,0 +1,24 @@
+{
+  "name": "Clean Your Tabs",
+  "description": "A plugin to clean your Chrome tabs",
+  "version": "0.1",
+  "background": { "scripts": ["background.js"] },
+  "options_page": "pages/options.html",
+  "manifest_version": 2,
+  "permissions":[
+    "tabs",
+    "storage",
+    "notifications"
+  ],
+  "commands": {
+        "clean_tabs": {
+            "suggested_key": {
+                "windows": "Ctrl+B",
+                "mac": "Command+B",
+                "chromeos": "Ctrl+K",
+                "linux": "Ctrl+K"
+            },
+            "description": "test"
+        }
+    }
+}

@@ -1,0 +1,20 @@
+.config-content{
+  margin-left: 20px;
+  width: 600px;
+}
+
+.margin-in{
+  margin-left: 20px;
+}
+
+.margin-in .input-group{
+  margin-top: 20px;
+}
+
+#search-add button{
+  margin-top: 20px;
+}
+
+#save-config {
+  margin-left: 400px;
+}

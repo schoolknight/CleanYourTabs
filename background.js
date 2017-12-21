@@ -1,4 +1,4 @@
-
+console.log('back running');
 function setObj(key, obj){
   var resStr = JSON.stringify(obj);
   localStorage.setItem(key, resStr);
@@ -9,10 +9,61 @@ function getObj(key){
   return JSON.parse(resStr);
 }
 
+function createTab(keyTab){
+  var tmpItem = {
+    id: keyTab.id,
+    frequency: 0,
+    lastActive: (new Date()).getTime(),
+    activeTime: 0,
+  };
+  return tmpItem;
 
+}
+
+//init
 if (!getObj('myTabs')){
   setObj('myTabs',[]);
 }
+
+
+if (!localStorage.rules){
+  setObj('rules',[
+    {
+      flag: false,
+      num: 2
+    },
+    {
+      flag: false,
+      num: 100000
+    },
+    {
+      flag: false,
+      num: 100000
+    }
+  ]);
+}
+
+if (!localStorage.search){
+  setObj('search',[
+    {
+      flag: false,
+      name: "Baidu",
+      pattern: "www.baidu.com/s"
+    },
+    {
+      flag: false,
+      name: "Google",
+      pattern: "www.google.com/search"
+    },
+    {
+      flag: false,
+      name: "Baidu",
+      pattern: "github.com/search"
+    }
+  ]);
+}
+
+
 
 chrome.tabs.query({},function(tabList){
   var myTabs = getObj('myTabs');
@@ -29,8 +80,12 @@ chrome.tabs.query({},function(tabList){
 
     }
     if (flag){
-      item.visitTime = 0;
-      tmpTabs.push(item);
+      var tmpItem = createTab(item);
+      tmpTabs.push(tmpItem);
+    }
+    if (item.active){
+      localStorage.currentActive = item.id;
+      localStorage.activeStart = (new Date()).getTime();
     }
   }
   setObj('myTabs', tmpTabs);
@@ -43,22 +98,39 @@ chrome.tabs.query({},function(tabList){
 function cleanTabs(){
 
   var myTabs = getObj('myTabs');
-  var backupTabs = [];
 
+  var toRemove = [];
   for (var i = 0; i < myTabs.length;i ++){
-    if (myTabs[i].visitTime < 2){
-      chrome.tabs.remove(myTabs[i].id);
-      backupTabs.push({
-        id: myTabs[i].id,
-        url: myTabs[i].url,
-        title: myTabs[i].title
-      });
+    if (myTabs[i].frequency < 2){
+      //chrome.tabs.remove(myTabs[i].id);
+      toRemove.push(myTabs[i].id);
     }
   }
-  setObj('backup', backupTabs);
-  chrome.tabs.create({
-    url: 'backup.html'
+  chrome.tabs.query({},function(tabList){
+    var backupTabs = [];
+    for (var i = 0;i < toRemove.length;i ++){
+      for (var j = 0;j < tabList.length;j ++){
+        if (toRemove[i] == tabList[j].id){
+          backupTabs.push({
+            id: toRemove[i],
+            url: tabList[j].url,
+            title: tabList[j].title
+          });
+          break;
+        }
+      }
+    }
+    chrome.tabs.remove(toRemove);
+    setObj('backup', backupTabs);
+    chrome.tabs.create({
+      url: 'pages/backup.html'
+    });
   });
+
+
+
+
+
 /*
   chrome.tabs.query({},function(tabList){
     var resUrl = [];
@@ -78,8 +150,9 @@ function cleanTabs(){
 
 chrome.tabs.onCreated.addListener(function(keyTab){
   var myTabs = getObj('myTabs');
-  keyTab.visitTime = 0;
-  myTabs.push(keyTab);
+  //keyTab.visitTime = 0;
+  var tmpItem = createTab(keyTab);
+  myTabs.push(tmpItem);
   setObj('myTabs', myTabs);
 });
 
@@ -99,15 +172,19 @@ chrome.tabs.onActivated.addListener(function(keyInfo){
   var myTabs = getObj('myTabs');
   for (var i = 0;i < myTabs.length;i ++){
     if (myTabs[i].id == keyInfo.tabId){
-      myTabs[i].visitTime += 1;
-      new Notification('test',{
-        body: myTabs[i].visitTime
-      });
+      myTabs[i].frequency += 1;
       break;
     }
   }
+  for (var i = 0;i < myTabs.length;i ++){
+    if (myTabs[i].id == localStorage.currentActive){
+      myTabs[i].lastActive = (new Date()).getTime;
+      myTabs[i].activeTime += (new Date()).getTime() - localStorage.activeStart;
+    }
+  }
+  localStorage.currentActive = keyInfo.tabId;
+  localStorage.activeStart = (new Date()).getTime();
   setObj('myTabs', myTabs);
-
 });
 
 

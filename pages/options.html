@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <script src="../lib/jquery-3.2.1.min.js"></script>
+  <link rel="stylesheet" href="../lib/bootstrap.min.css" >
+  <script src="../lib/bootstrap.min.js"></script>
+  <link href="options.css" type="text/css" rel="stylesheet"/>
+</head>
+<body>
+  <div class="page-header">
+    <h1>Clean Your Tabs <small>Configuration</small></h1>
+  </div>
+
+  <div class='config-content'>
+    <h3>Filter Rules</h3>
+
+    <div id="rules" class='margin-in'>
+      <div class="input-group">
+        <span class="input-group-addon">
+          <input type="checkbox">
+        </span>
+        <span class="input-group-addon" >Visit Frequency Less Than</span>
+        <input type="text" class="form-control" placeholder="" aria-describedby="basic-addon1">
+      </div>
+
+      <div class="input-group">
+        <span class="input-group-addon">
+          <input type="checkbox">
+        </span>
+        <span class="input-group-addon" >Last Actived Before (second)</span>
+        <input type="text" class="form-control" placeholder="" aria-describedby="basic-addon1">
+      </div>
+
+      <div class="input-group">
+        <span class="input-group-addon">
+          <input type="checkbox">
+        </span>
+        <span class="input-group-addon" >Total Active Time Less Than (second)</span>
+        <input type="text" class="form-control" placeholder="" aria-describedby="basic-addon1">
+      </div>
+    </div>
+
+    <h3>Search Pages</h3>
+    <div id="search" class="margin-in">
+
+    </div>
+
+    <div id="search-add" class='margin-in'>
+      <h4>Add Other Search Pages</h4>
+      <div class="input-group" id='search-name'>
+        <span class="input-group-addon">Name</span>
+        <input type="text" class="form-control" placeholder="Name">
+      </div>
+      <div class="input-group" id='search-pattern'>
+        <span class="input-group-addon">Pattern</span>
+        <input type="text" class="form-control" placeholder="Pattern">
+      </div>
+      <button type="button" class="btn btn-info">Add</button>
+    </div>
+
+    <button type="button" class="btn btn-success" id='save-config'>Save Configuration</button>
+  </div>
+
+
+<script src="options.js"></script>
+</body>
+</html>
