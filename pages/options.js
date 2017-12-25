@@ -21,7 +21,7 @@ function freshSearch(){
       searchStr += "<input type=\"checkbox\">";
     }
 
-    searchStr += "</span><span class=\"input-group-addon\">" + search[i].name + "</span>";
+    searchStr += "</span><span class=\"input-group-addon\" id=\"search-name\">" + search[i].name + "</span>";
 
     searchStr += "<input type=\"text\" class=\"form-control\" placeholder=\"Pattern\" value=\"" + search[i].pattern + "\">";
     searchStr += "<span class=\"input-group-btn\"><button class=\"btn btn-default\" type=\"button\" data-id=\"" + i + "\">Delete</button></span></div>";
@@ -47,15 +47,32 @@ function saveConfig(){
   var rules = getObj('rules');
   for (var i = 0;i < ruleElements.length;i ++){
     var inputElements = $(ruleElements[i]).find('input');
-    console.log($(inputElements[0]).is(":checked"));
+    rules[i].flag = $(inputElements[0]).is(":checked");
+    rules[i].num = parseInt($(inputElements[1]).val());
+  }
+  setObj('rules', rules);
+
+  var search =[];
+  var searchElements = $('#search .input-group');
+
+  for (var i = 0;i < searchElements.length;i ++){
+    var inputElements = $(searchElements[i]).find('input')
+    search.push({
+      flag: $(inputElements[0]).is(":checked"),
+      name: $(searchElements[i]).find('#search-name').text(),
+      pattern: $(inputElements[1]).val()
+    });
   }
 
-
-
+  setObj('search',search);
 }
 
 
-$("#save-config").click(saveConfig);
+$("#save-config").click(function(){
+  saveConfig();
+  console.log('ok');
+  $(this).button('complete');
+});
 
 
 

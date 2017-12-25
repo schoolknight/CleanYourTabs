@@ -91,40 +91,100 @@ chrome.tabs.query({},function(tabList){
   setObj('myTabs', tmpTabs);
 });
 
+function ifRemove(keyTab, rules){
 
+  if (rules[0].flag && keyTab.frequency < rules[0].num){
+    return true;
+  }
 
+  if (rules[1].flag && (new Date()).getTime() - keyTab.lastActive > rules[1].num * 1000){
+    return true;
+  }
+
+  if (rules[2].flag && keyTab.activeTime < rules[2].num * 1000){
+    return true;
+  }
+  return false;
+
+}
+
+function ifSearch(keyUrl, search){
+  for (var i = 0;i < search.length;i ++){
+    console.log(search)
+    var tmpPattern = new RegExp(search[i].pattern, "i");
+
+    if (keyUrl.search(tmpPattern) >= 0){
+      return i;
+    }
+  }
+  return -1;
+}
 
 
 function cleanTabs(){
 
   var myTabs = getObj('myTabs');
+  var rules = getObj('rules');
+  var search = getObj('search');
+
+  var searchPages = [];
+  for (var i = 0;i < search.length;i ++){
+    searchPages.push([]);
+  }
 
   var toRemove = [];
   for (var i = 0; i < myTabs.length;i ++){
-    if (myTabs[i].frequency < 2){
+
+    if (ifRemove(myTabs[i], rules)){
       //chrome.tabs.remove(myTabs[i].id);
       toRemove.push(myTabs[i].id);
     }
   }
   chrome.tabs.query({},function(tabList){
     var backupTabs = [];
-    for (var i = 0;i < toRemove.length;i ++){
-      for (var j = 0;j < tabList.length;j ++){
-        if (toRemove[i] == tabList[j].id){
-          backupTabs.push({
-            id: toRemove[i],
-            url: tabList[j].url,
-            title: tabList[j].title
-          });
-          break;
+
+    for (var i = 0;i < tabList.length;i ++){
+
+      var searchPos = ifSearch(tabList[i].url, search);
+      console.log(searchPos);
+      var removePos = toRemove.indexOf(tabList[i].id);
+
+
+      if (searchPos >= 0){
+        searchPages[searchPos].push({
+          id: tabList[i].id,
+          url: tabList[i].url,
+          title: tabList[i].title
+        });
+        if (removePos < 0){
+          //toRemove.splice(removePos, 1);
+          toRemove.push(tabList[i].id);
         }
+        continue;
+      }
+      if (removePos >= 0){
+        backupTabs.push({
+          id: tabList[i].id,
+          url: tabList[j].url,
+          title: tabList[j].title
+        });
       }
     }
+
     chrome.tabs.remove(toRemove);
+
+
+    setObj('searchPage', searchPages);
     setObj('backup', backupTabs);
     chrome.tabs.create({
       url: 'pages/backup.html'
     });
+    chrome.tabs.create({
+      url: 'pages/search.html'
+    });
+
+
+
   });
 
 
