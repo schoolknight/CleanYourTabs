@@ -165,8 +165,8 @@ function cleanTabs(){
       if (removePos >= 0){
         backupTabs.push({
           id: tabList[i].id,
-          url: tabList[j].url,
-          title: tabList[j].title
+          url: tabList[i].url,
+          title: tabList[i].title
         });
       }
     }
