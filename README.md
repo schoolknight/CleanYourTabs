@@ -15,7 +15,7 @@ So, I never find the tabs I really need, and it costs too much time.
 This extension is created to help me clean my tabs and find the tabs in need.
 
 ### Install
-
+- [Chrome WebStore](https://chrome.google.com/webstore/detail/clean-your-tabs/onodklddnocmkpfogamhldkheanckeje?utm_source=chrome-ntp-icon)
 
 
 ### Usage
